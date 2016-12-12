@@ -93,11 +93,34 @@ function search(options, callback) {
     var $ = cheerio.load(body);
 
     var arr = $('.g h3 a').toArray();
-    
+    var arr2 = $('.g .st').toArray();
+
+    var getData = function(elem) {
+      if (elem.type === "text" || elem.children.length === 0) {
+        if (elem.data && typeof elem.data === "string") {
+          return elem.data.toString();
+        } else {
+          return "";
+        }
+      } else {
+        return getData(elem.children[0]);
+      }
+    }
+
     for (var t = 0; t < arr.length; t++) {
+      var result = {};
       var parsed = url.parse(arr[t].attribs.href, true);
       if (parsed.pathname === '/url') {
-        results.push({link: parsed.query.q, title: $(arr[t]).text()});
+        result.link = parsed.query.q;
+        result.title = $(arr[t]).text();
+
+        result.data = "";
+        var elem = arr2[t].children[0];
+        while (elem.next) {
+          result.data += getData(elem);
+          elem = elem.next;
+        }
+        results.push(result);
       }
     }
 
