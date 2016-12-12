@@ -115,10 +115,12 @@ function search(options, callback) {
         result.title = $(arr[t]).text();
 
         result.data = "";
-        var elem = arr2[t].children[0];
-        while (elem.next) {
-          result.data += getData(elem);
-          elem = elem.next;
+        if (arr2[t] && arr2[t].children.length > 0) {
+          var elem = arr2[t].children[0];
+          while (elem.next) {
+            result.data += getData(elem);
+            elem = elem.next;
+          }
         }
         results.push(result);
       }
